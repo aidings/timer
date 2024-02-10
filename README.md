@@ -1,5 +1,5 @@
 # timer
-calc time for module
+> calc time for module
 
 ## 1.install
 `pip install git+https://github.com/aidings/timer.git`
