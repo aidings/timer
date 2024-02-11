@@ -54,7 +54,7 @@ class Timer:
         self._tcnt = 0
 
     @property
-    def running(self):
+    def is_running(self):
         return self._start is not None
 
     @property
