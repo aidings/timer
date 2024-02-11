@@ -33,23 +33,25 @@ class Timer:
         self._elapsed = 0.0
         self._start = None
         self.fmt = fmt
-        self._tcnt = 0
+        self._tcnt = 0 # 计数器
 
-    def start(self):
-        if self._start is not None:
-            raise RuntimeError("timer already started!")
+    def start(self, reset=False):
         self._start = self._timeit()
+        self._elapsed *= int(reset)
+    
+    def _update(self, update=True):
+        self._tcnt += int(update)
 
-    def stop(self):
+    def stop(self, update_count:bool=False):
         if self._start is None:
             raise RuntimeError("timer not started!")
         end = self._timeit()
         self._elapsed += end - self._start
-        self._start = None
-        self._tcnt += 1
+        self._update(update=update_count)
 
     def reset(self):
         self._elapsed = 0.0
+        self._tcnt = 0
 
     @property
     def running(self):
@@ -78,7 +80,7 @@ class Timer:
         def wrapper(*args, **kwargs):
             self.start()
             result = func(*args, **kwargs)
-            self.stop()
+            self.stop(update_count=True)
             template = "[{}] {}.{} elapsed time: {" + self.fmt + "}s"
             value = template.format(self.label, func.__module__, func.__name__, self._elapsed)
 
@@ -87,11 +89,12 @@ class Timer:
         return wrapper
 
     def __enter__(self):
-        self.start()
+        self.start(reset=True)
         return self
 
     def __exit__(self, *args):
         self.stop()
+        self.update(update_count=True)
         template = "[{}] elapsed time: {:.3f}s"
         value = template.format(self.label, self._elapsed)
         info(value)
