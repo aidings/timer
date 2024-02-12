@@ -93,8 +93,7 @@ class Timer:
         return self
 
     def __exit__(self, *args):
-        self.stop()
-        self.update(update_count=True)
+        self.stop(update_count=True)
         template = "[{}] elapsed time: {:.3f}s"
         value = template.format(self.label, self._elapsed)
         info(value)
